@@ -21,6 +21,11 @@ export default defineConfig({
         display: './display.html',
         mobile: './mobile.html',
         leaderboard: './leaderboard.html'
+      },
+      output: {
+        assetFileNames: '[name][extname]',
+        chunkFileNames: '[name].js',
+        entryFileNames: '[name].js'
       }
     },
     copyPublicDir: true

@@ -1239,3 +1239,25 @@ function getOrdinal(n) {
   const v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
+// Expose functions to window for onclick handlers
+window.loadEvents = loadEvents;
+window.loadEvent = loadEvent;
+window.deleteEvent = deleteEvent;
+window.showTab = showTab;
+window.saveEvent = saveEvent;
+window.createNewEvent = createNewEvent;
+window.updateFormatVisibility = updateFormatVisibility;
+window.setupSideGameToggles = setupSideGameToggles;
+window.loadTeamsAndPlayers = loadTeamsAndPlayers;
+window.addTeam = addTeam;
+window.addPlayerToTeam = addPlayerToTeam;
+window.deleteTeam = deleteTeam;
+window.deletePlayer = deletePlayer;
+window.loadScoring = loadScoring;
+window.enterScore = enterScore;
+window.loadDocuments = loadDocuments;
+window.generateDocument = generateDocument;
+window.closeModal = closeModal;
+window.copyToClipboard = copyToClipboard;
+window.loadAudit = loadAudit;
