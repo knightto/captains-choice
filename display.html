@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Leaderboard Display</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 1920px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .header h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .header .event-info {
+      font-size: 1.8rem;
+      opacity: 0.9;
+      margin: 10px 0;
+    }
+
+    .header .last-update {
+      font-size: 1.2rem;
+      opacity: 0.7;
+      margin-top: 15px;
+    }
+
+    .flights-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .flight-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .flight-header {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table th {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 15px 10px;
+      text-align: left;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .leaderboard-table th:first-child {
+      border-radius: 10px 0 0 0;
+    }
+
+    .leaderboard-table th:last-child {
+      border-radius: 0 10px 0 0;
+      text-align: center;
+    }
+
+    .leaderboard-table td {
+      padding: 12px 10px;
+      font-size: 1.4rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .leaderboard-table td:last-child {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.6rem;
+    }
+
+    .leaderboard-table tr:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .position {
+      font-weight: bold;
+      font-size: 1.6rem;
+      width: 60px;
+    }
+
+    .position-1 { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
+    .position-2 { color: #C0C0C0; text-shadow: 0 0 10px #C0C0C0; }
+    .position-3 { color: #CD7F32; text-shadow: 0 0 10px #CD7F32; }
+
+    .team-name {
+      font-weight: 600;
+    }
+
+    .holes-complete {
+      opacity: 0.7;
+      font-size: 1.1rem;
+    }
+
+    .score-good {
+      color: #4ade80;
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+    }
+
+    .score-average {
+      color: #fbbf24;
+      text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+    }
+
+    .score-high {
+      color: #f87171;
+      text-shadow: 0 0 5px rgba(248, 113, 113, 0.5);
+    }
+
+    .in-progress {
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 2rem;
+      padding: 50px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 30px;
+      font-size: 1.5rem;
+      opacity: 0.7;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .live-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    /* Full screen mode optimizations */
+    @media (min-width: 1920px) {
+      .header h1 { font-size: 5rem; }
+      .header .event-info { font-size: 2.2rem; }
+      .flight-header { font-size: 2.5rem; }
+      .leaderboard-table th { font-size: 1.5rem; }
+      .leaderboard-table td { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="live-indicator"></span>LIVE LEADERBOARD</h1>
+      <div class="event-info" id="eventName">Loading...</div>
+      <div class="event-info" id="eventDetails"></div>
+      <div class="last-update" id="lastUpdate"></div>
+    </div>
+
+    <div class="flights-container" id="flightsContainer">
+      <div class="loading">Loading leaderboard data...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+    let currentEventId = null;
+    let refreshInterval = null;
+
+    // Get event ID from URL parameter or use first event
+    async function initialize() {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentEventId = urlParams.get('eventId');
+
+      if (!currentEventId) {
+        // Get the first event
+        const response = await fetch(`${API_BASE}/events`);
+        const events = await response.json();
+        if (events && events.length > 0) {
+          currentEventId = events[0]._id || events[0].id;
+        }
+      }
+
+      if (currentEventId) {
+        await loadEvent();
+        await loadLeaderboard();
+        
+        // Auto-refresh every 30 seconds
+        refreshInterval = setInterval(loadLeaderboard, 30000);
+      }
+    }
+
+    async function loadEvent() {
+      try {
+        const response = await fetch(`${API_BASE}/events/${currentEventId}`);
+        const event = await response.json();
+        
+        document.getElementById('eventName').textContent = event.name;
+        document.getElementById('eventDetails').innerHTML = 
+          `${event.course_name} • ${event.course_city}, ${event.course_state} • ${event.event_date}`;
+      } catch (error) {
+        console.error('Error loading event:', error);
+      }
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const response = await fetch(`${API_BASE}/events/${currentEventId}/leaderboard`);
+        const data = await response.json();
+        
+        displayLeaderboard(data);
+        updateTimestamp();
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        document.getElementById('flightsContainer').innerHTML = 
+          '<div class="no-data">Unable to load leaderboard data</div>';
+      }
+    }
+
+    function displayLeaderboard(data) {
+      const container = document.getElementById('flightsContainer');
+      
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="no-data">No teams have started yet</div>';
+        return;
+      }
+
+      // Group by flight
+      const flightGroups = {};
+      data.forEach(team => {
+        const flight = team.flight || 'Flight 1';
+        if (!flightGroups[flight]) {
+          flightGroups[flight] = [];
+        }
+        flightGroups[flight].push(team);
+      });
+
+      // Generate HTML for each flight
+      let html = '';
+      Object.keys(flightGroups).sort().forEach(flightName => {
+        const teams = flightGroups[flightName];
+        
+        html += `
+          <div class="flight-card">
+            <div class="flight-header">${flightName}</div>
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Team</th>
+                  <th>Status</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        teams.forEach((team, index) => {
+          const position = index + 1;
+          const positionClass = `position-${position <= 3 ? position : ''}`;
+          const score = team.score || 0;
+          const holesComplete = team.holesComplete || 0;
+          
+          let scoreClass = '';
+          if (score > 0) {
+            if (score < 65) scoreClass = 'score-good';
+            else if (score < 75) scoreClass = 'score-average';
+            else scoreClass = 'score-high';
+          }
+
+          const inProgress = holesComplete < 18 ? 'in-progress' : '';
+
+          html += `
+            <tr class="${inProgress}">
+              <td class="position ${positionClass}">${position}</td>
+              <td class="team-name">${team.team_name}</td>
+              <td class="holes-complete">${holesComplete}/18 holes</td>
+              <td class="${scoreClass}">${score || '-'}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function updateTimestamp() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('lastUpdate').textContent = `Last updated: ${timeString}`;
+    }
+
+    // Initialize on load
+    initialize();
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>

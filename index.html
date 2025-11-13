@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golf Outing Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: #2c5f2d;
+      color: white;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    
+    .subtitle {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .format-dependent {
+      display: none;
+    }
+    
+    .format-dependent.visible {
+      display: block;
+    }
+    
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      background: white;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
+    }
+    
+    .tab:hover {
+      background: #f0f0f0;
+    }
+    
+    .tab.active {
+      background: #2c5f2d;
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #2c5f2d;
+    }
+    
+    .section h2 {
+      color: #2c5f2d;
+      font-size: 22px;
+    }
+    
+    .section-description {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #555;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2c5f2d;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #2c5f2d;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #234d24;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #218838;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+    
+    .info-box h3 {
+      margin-bottom: 8px;
+      color: #1976D2;
+      font-size: 16px;
+    }
+    
+    .info-box p {
+      margin-bottom: 6px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .event-list {
+      list-style: none;
+    }
+    
+    .event-item {
+      padding: 15px;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    
+    .event-item:hover {
+      background: #f0f0f0;
+    }
+    
+    .event-info h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+      color: #2c5f2d;
+    }
+    
+    .event-info p {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    .radio-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    
+    .subsection {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    
+    .subsection h3 {
+      color: #2c5f2d;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏌️ Golf Outing Management System</h1>
+      <p class="subtitle">Comprehensive admin panel for all tournament formats</p>
+    </header>
+    
+    <div id="alert-container"></div>
+    
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab active" onclick="showTab('events')">Events</button>
+      <button class="tab" onclick="showTab('basic-info')">Basic Info</button>
+      <button class="tab" onclick="showTab('format-rules')">Format & Rules</button>
+      <button class="tab" onclick="showTab('handicaps')">Handicaps</button>
+      <button class="tab" onclick="showTab('side-games')">Side Games</button>
+      <button class="tab" onclick="showTab('fees-payouts')">Fees & Payouts</button>
+      <button class="tab" onclick="showTab('registration')">Registration</button>
+      <button class="tab" onclick="showTab('logistics')">Logistics</button>
+      <button class="tab" onclick="showTab('teams-players')">Teams & Players</button>
+      <button class="tab" onclick="showTab('live-scoring')">Live Scoring</button>
+      <button class="tab" onclick="showTab('documents')">Documents</button>
+    </div>
+    
+    <!-- Tab Content: Events List -->
+    <div id="events" class="tab-content active">
+      <div class="section">
+        <div class="section-header">
+          <h2>Your Events</h2>
+          <button class="btn btn-primary" onclick="createNewEvent()">+ Create New Event</button>
+        </div>
+        <ul id="events-list" class="event-list"></ul>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Basic Info -->
+    <div id="basic-info" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Event Information</h2>
+        </div>
+        <p class="section-description">Core details about your golf outing</p>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Event Name *</label>
+            <input type="text" id="name" placeholder="e.g., Annual Charity Golf Scramble">
+          </div>
+          
+          <div class="form-group">
+            <label for="event_date">Event Date *</label>
+            <input type="date" id="event_date">
+          </div>
+          
+          <div class="form-group">
+            <label for="start_time">Start Time *</label>
+            <input type="time" id="start_time">
+          </div>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="course_name">Course Name</label>
+            <input type="text" id="course_name" placeholder="e.g., Pebble Beach Golf Links">
+          </div>
+          
+          <div class="form-group">
+            <label for="course_city">City</label>
+            <input type="text" id="course_city">
+          </div>
+          
+          <div class="form-group">
+            <label for="course_state">State</label>
+            <input type="text" id="course_state">
+          </div>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="start_type">Start Type</label>
+            <select id="start_type">
+              <option value="Shotgun">Shotgun Start</option>
+              <option value="Tee Times">Tee Times</option>
+              <option value="Modified Shotgun">Modified Shotgun</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="holes_played">Holes Played</label>
+            <select id="holes_played">
+              <option value="18">18 Holes</option>
+              <option value="9">9 Holes</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="field_size">Expected Number of Players</label>
+            <input type="number" id="field_size" min="1" placeholder="e.g., 72">
+          </div>
+          
+          <div class="form-group">
+            <label for="number_of_flights">Number of Flights</label>
+            <input type="number" id="number_of_flights" min="1" max="10" value="1" placeholder="1">
+            <small class="help-text">Teams will be divided evenly by score</small>
+          </div>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="team_size">Team Size</label>
+            <select id="team_size">
+              <option value="2">2-Man</option>
+              <option value="3">3-Man</option>
+              <option value="4" selected>4-Man</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="format">Format</label>
+            <select id="format" onchange="updateFormatVisibility()">
+              <option value="Captains Choice" selected>Captain's Choice (Scramble)</option>
+              <option value="Best Ball">Best Ball</option>
+              <option value="Alternate Shot">Alternate Shot</option>
+              <option value="Stroke Play">Stroke Play</option>
+              <option value="Modified Stableford">Modified Stableford</option>
+              <option value="Match Play">Match Play</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Tee Settings</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="mens_tee">Men's Tees</label>
+              <select id="mens_tee">
+                <option value="White" selected>White</option>
+                <option value="Blue">Blue</option>
+                <option value="Black">Black</option>
+                <option value="Gold">Gold</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="womens_tee">Women's Tees</label>
+              <select id="womens_tee">
+                <option value="Red" selected>Red</option>
+                <option value="Gold">Gold</option>
+                <option value="White">White</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="seniors_age">Seniors Age</label>
+              <input type="number" id="seniors_age" value="60" min="50" max="80">
+            </div>
+            
+            <div class="form-group">
+              <label for="seniors_tee">Seniors Tees</label>
+              <select id="seniors_tee">
+                <option value="Gold" selected>Gold</option>
+                <option value="White">White</option>
+                <option value="Blue">Blue</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="super_seniors_age">Super Seniors Age</label>
+              <input type="number" id="super_seniors_age" value="70" min="65" max="90">
+            </div>
+            
+            <div class="form-group">
+              <label for="super_seniors_tee">Super Seniors Tees</label>
+              <select id="super_seniors_tee">
+                <option value="Gold">Gold</option>
+                <option value="Forward">Forward</option>
+                <option value="Red">Red</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="max_handicap_index">Maximum Handicap Index Allowed</label>
+            <input type="number" id="max_handicap_index" value="40.0" step="0.1" min="0" max="54.0">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Format & Rules -->
+    <div id="format-rules" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Format & Rules Configuration</h2>
+        </div>
+        <p class="section-description">Define the specific rules for your tournament format</p>
+        
+        <div class="subsection format-dependent scramble-only">
+          <h3>Scramble Rules (Captain's Choice Only)</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="required_drives_per_player">Required Drives Per Player</label>
+              <input type="number" id="required_drives_per_player" value="4" min="0" max="18">
+              <small style="color: #666; display: block; margin-top: 5px;">Number of times each player's drive must be used</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="penalty_missing_drives">Penalty for Missing Drives (strokes)</label>
+              <input type="number" id="penalty_missing_drives" value="2" min="0" max="10">
+              <small style="color: #666; display: block; margin-top: 5px;">Penalty applied if requirement not met</small>
+            </div>
+          </div>
+          
+          <div class="info-box">
+            <p><strong>Note:</strong> These rules only apply when format is set to "Captain's Choice (Scramble)"</p>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>General Playing Rules</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="lie_improvement_distance">Ball Placement Distance</label>
+              <select id="lie_improvement_distance">
+                <option value="1 club length" selected>1 Club Length</option>
+                <option value="scorecard length">Scorecard Length</option>
+                <option value="6 inches">6 Inches</option>
+                <option value="no improvement">No Improvement (Play as Lies)</option>
+              </select>
+            </div>
+            
+            <div class="form-group format-dependent scramble-only">
+              <label>Same Cut of Grass Requirement (Scramble)</label>
+              <div class="checkbox-group">
+                <input type="checkbox" id="same_cut_requirement" checked>
+                <label for="same_cut_requirement">Must stay in same cut (fairway to fairway, rough to rough)</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Bunker Rules</label>
+              <div class="checkbox-group">
+                <input type="checkbox" id="bunker_rake_and_place" checked>
+                <label for="bunker_rake_and_place">Allow rake and place in bunkers</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Preferred Lies / Winter Rules</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="lift_clean_place" checked>
+            <label for="lift_clean_place">Lift, Clean, and Place in effect</label>
+          </div>
+          
+          <div class="form-group">
+            <label for="lift_clean_place_areas">Where Lift, Clean, Place Applies</label>
+            <select id="lift_clean_place_areas">
+              <option value="fairway" selected>Fairway Only</option>
+              <option value="fairway_and_rough">Fairway and Rough</option>
+              <option value="everywhere">Everywhere Through the Green</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Out of Bounds & Lost Balls</h3>
+          
+          <div class="form-group">
+            <label>OB/Lost Ball Rule</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="ob_stroke_distance" name="ob_rule" value="stroke_and_distance" checked>
+                <label for="ob_stroke_distance">Stroke and Distance</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="ob_lateral" name="ob_rule" value="lateral_drop">
+                <label for="ob_lateral">Lateral Drop (1-stroke penalty)</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="e5_local_rule">
+            <label for="e5_local_rule">Use E-5 Local Rule (drop with 2-stroke penalty where ball went OB/lost)</label>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Putting Rules</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="gimme_allowed" checked>
+            <label for="gimme_allowed">Allow gimmes (conceded putts)</label>
+          </div>
+          
+          <div class="form-group">
+            <label for="gimme_distance">Gimme Distance</label>
+            <select id="gimme_distance">
+              <option value="putter grip" selected>Inside Putter Grip (~18 inches)</option>
+              <option value="leather">Inside Leather (~12 inches)</option>
+              <option value="2 feet">2 Feet</option>
+              <option value="none">No Gimmes</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Maximum Score</h3>
+          
+          <div class="form-group">
+            <label for="max_score_rule">Maximum Score Per Hole</label>
+            <select id="max_score_rule">
+              <option value="net_double_bogey" selected>Net Double Bogey</option>
+              <option value="double_bogey">Double Bogey</option>
+              <option value="triple_bogey">Triple Bogey</option>
+              <option value="none">No Maximum</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Pace of Play</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="max_search_time">Maximum Search Time (minutes)</label>
+              <input type="number" id="max_search_time" value="3" min="1" max="5">
+            </div>
+            
+            <div class="form-group">
+              <label>Ready Golf</label>
+              <div class="checkbox-group">
+                <input type="checkbox" id="ready_golf" checked>
+                <label for="ready_golf">Ready golf encouraged (hit when ready)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Handicaps -->
+    <div id="handicaps" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Handicap & Scoring Configuration</h2>
+        </div>
+        
+        <div class="subsection">
+          <h3>Handicap Basis</h3>
+          
+          <div class="form-group">
+            <label for="handicap_basis">Handicap Type</label>
+            <select id="handicap_basis">
+              <option value="USGA" selected>USGA Handicap Index</option>
+              <option value="league">League Handicap</option>
+              <option value="estimate">Captain's Estimate (for players without official handicap)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Team Handicap Calculation</h3>
+          
+          <div class="info-box">
+            <h3>Common Methods:</h3>
+            <p><strong>Option A (4-man):</strong> 20% A + 15% B + 10% C + 5% D = 50% total</p>
+            <p><strong>Option B (4-man):</strong> 25% A + 20% B + 15% C + 10% D = 70% total</p>
+            <p><strong>Option C (2-man):</strong> 35% low + 15% high = 50% total</p>
+            <p><strong>Option D (3-man):</strong> 20% low + 15% mid + 10% high = 45% total</p>
+          </div>
+          
+          <div class="form-group">
+            <label for="team_handicap_method">Team Handicap Method</label>
+            <select id="team_handicap_method">
+              <option value="Option A" selected>Option A - Conservative (20-15-10-5)</option>
+              <option value="Option B">Option B - Generous (25-20-15-10)</option>
+              <option value="Option C">Option C - 2-Man (35-15)</option>
+              <option value="Option D">Option D - 3-Man (20-15-10)</option>
+              <option value="Custom">Custom Percentages</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="team_handicap_percentages">Custom Percentages (if Custom selected)</label>
+            <input type="text" id="team_handicap_percentages" placeholder="e.g., 20,15,10,5 or 35,15">
+            <small style="color: #666; display: block; margin-top: 5px;">Enter comma-separated percentages for each player (lowest to highest handicap)</small>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Competition Format</h3>
+          
+          <div class="form-group">
+            <label>Competition Type</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="comp_gross" name="competition_type" value="gross">
+                <label for="comp_gross">Gross Only</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="comp_net" name="competition_type" value="net">
+                <label for="comp_net">Net Only</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="comp_both" name="competition_type" value="both" checked>
+                <label for="comp_both">Both Gross and Net</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Flights</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="use_flights" checked>
+            <label for="use_flights">Divide teams into flights</label>
+          </div>
+          
+          <div class="form-group">
+            <label for="flight_method">Flight Division Method</label>
+            <select id="flight_method">
+              <option value="team_handicap" selected>By Team Handicap</option>
+              <option value="gross_score">By Gross Score (after round)</option>
+              <option value="random">Random</option>
+              <option value="manual">Manual Assignment</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Tiebreakers</h3>
+          
+          <div class="form-group">
+            <label for="tiebreak_method">Tiebreaker Method</label>
+            <select id="tiebreak_method">
+              <option value="matchback" selected>Card Matchback</option>
+              <option value="sudden_death">Sudden Death Playoff</option>
+              <option value="share">Share Prize</option>
+              <option value="chip_off">Chip-Off Contest</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="tiebreak_order">Matchback Order (if applicable)</label>
+            <input type="text" id="tiebreak_order" value="back9,last6,last3,18th" placeholder="e.g., back9,last6,last3,18th">
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="sudden_death">
+            <label for="sudden_death">Use sudden death playoff if matchback doesn't break tie</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Side Games -->
+    <div id="side-games" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Side Games & Add-Ons</h2>
+        </div>
+        <p class="section-description">Configure optional side contests and games</p>
+        
+        <!-- Skins -->
+        <div class="subsection">
+          <h3>Skins Game</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="skins_enabled">
+            <label for="skins_enabled">Enable Skins Game</label>
+          </div>
+          
+          <div id="skins-options" class="hidden">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="skins_type">Skins Type</label>
+                <select id="skins_type">
+                  <option value="net" selected>Net Skins</option>
+                  <option value="gross">Gross Skins</option>
+                  <option value="both">Both Gross and Net</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="skins_entry_fee">Entry Fee Per Team ($)</label>
+                <input type="number" id="skins_entry_fee" value="20" min="0" step="5">
+              </div>
+            </div>
+            
+            <p style="color: #666; font-size: 14px; margin-top: 10px;">
+              <strong>How it works:</strong> Lowest score on hole wins. If tied, skin carries over. Multiple winners split the pot.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Closest to Pin -->
+        <div class="subsection">
+          <h3>Closest to the Pin</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="ctp_enabled">
+            <label for="ctp_enabled">Enable Closest to the Pin</label>
+          </div>
+          
+          <div id="ctp-options" class="hidden">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="ctp_holes">Par 3 Holes for CTP</label>
+                <input type="text" id="ctp_holes" placeholder="e.g., 3,7,12,16">
+                <small style="color: #666; display: block; margin-top: 5px;">Enter hole numbers separated by commas</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="ctp_categories">Categories</label>
+                <input type="text" id="ctp_categories" value="Overall" placeholder="e.g., Men,Women,Seniors">
+                <small style="color: #666; display: block; margin-top: 5px;">Separate multiple categories with commas</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Long Drive -->
+        <div class="subsection">
+          <h3>Long Drive</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="long_drive_enabled">
+            <label for="long_drive_enabled">Enable Long Drive</label>
+          </div>
+          
+          <div id="long-drive-options" class="hidden">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="long_drive_holes">Hole(s) for Long Drive</label>
+                <input type="text" id="long_drive_holes" placeholder="e.g., 9,18">
+                <small style="color: #666; display: block; margin-top: 5px;">Must be in the fairway</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="long_drive_categories">Categories</label>
+                <input type="text" id="long_drive_categories" value="Men,Women" placeholder="e.g., Men,Women,Seniors">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Straight Drive -->
+        <div class="subsection">
+          <h3>Straight Drive / Closest to Line</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="straight_drive_enabled">
+            <label for="straight_drive_enabled">Enable Straight Drive Contest</label>
+          </div>
+          
+          <div id="straight-drive-options" class="hidden">
+            <div class="form-group">
+              <label for="straight_drive_hole">Hole for Straight Drive</label>
+              <input type="text" id="straight_drive_hole" placeholder="e.g., 10">
+              <small style="color: #666; display: block; margin-top: 5px;">Winner is closest to centerline of fairway</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Longest Putt -->
+        <div class="subsection">
+          <h3>Longest Putt</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="longest_putt_enabled">
+            <label for="longest_putt_enabled">Enable Longest Putt Contest</label>
+          </div>
+          
+          <div id="longest-putt-options" class="hidden">
+            <div class="form-group">
+              <label for="longest_putt_holes">Hole(s) for Longest Putt</label>
+              <input type="text" id="longest_putt_holes" placeholder="e.g., 9,18">
+            </div>
+          </div>
+        </div>
+        
+        <!-- 3-Putt Pot -->
+        <div class="subsection">
+          <h3>3-Putt Pot</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="three_putt_pot_enabled">
+            <label for="three_putt_pot_enabled">Enable 3-Putt Pot</label>
+          </div>
+          
+          <div id="three-putt-options" class="hidden">
+            <div class="form-group">
+              <label for="three_putt_amount">Amount Per 3-Putt ($)</label>
+              <input type="number" id="three_putt_amount" value="1" min="0" step="1">
+              <small style="color: #666; display: block; margin-top: 5px;">All 3-putts go into pot; winner takes all</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mulligans -->
+        <div class="subsection">
+          <h3>Mulligans</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="mulligans_enabled">
+            <label for="mulligans_enabled">Sell Mulligans</label>
+          </div>
+          
+          <div id="mulligan-options" class="hidden">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="mulligan_price">Price ($)</label>
+                <input type="number" id="mulligan_price" value="5" min="0" step="5">
+              </div>
+              
+              <div class="form-group">
+                <label for="mulligan_limit">Mulligans Per Player</label>
+                <input type="number" id="mulligan_limit" value="2" min="1" max="4">
+              </div>
+              
+              <div class="form-group">
+                <label for="mulligan_use">Where Can Mulligans Be Used</label>
+                <select id="mulligan_use">
+                  <option value="tee_only" selected>Tee Shots Only</option>
+                  <option value="anywhere">Anywhere</option>
+                </select>
+              </div>
+            </div>
+            
+            <p style="color: #666; font-size: 14px; margin-top: 10px;">
+              <strong>Note:</strong> Player must declare mulligan use before hitting the shot.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Fees & Payouts -->
+    <div id="fees-payouts" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Entry Fees & Payout Structure</h2>
+        </div>
+        
+        <div class="subsection">
+          <h3>Entry Fees</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="entry_fee_individual">Individual Entry Fee ($)</label>
+              <input type="number" id="entry_fee_individual" min="0" step="5" placeholder="e.g., 75">
+            </div>
+            
+            <div class="form-group">
+              <label for="entry_fee_team">Team Entry Fee ($)</label>
+              <input type="number" id="entry_fee_team" min="0" step="10" placeholder="e.g., 300">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="entry_includes">Entry Fee Includes</label>
+            <textarea id="entry_includes" placeholder="e.g., Green fee, cart, range balls, lunch, prizes, tee gift">Green fee, cart, range balls, lunch, prizes</textarea>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Prize Pool Allocation</h3>
+          
+          <div class="info-box">
+            <h3>Prize Pool Distribution</h3>
+            <p>Allocate percentages or dollar amounts to different prize categories. The system will calculate payouts based on the number of teams.</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="prize_pool_teams">Team Prizes (%)</label>
+              <input type="number" id="prize_pool_teams" min="0" max="100" step="5" value="60" placeholder="60">
+            </div>
+            
+            <div class="form-group">
+              <label for="prize_pool_skins">Skins (%)</label>
+              <input type="number" id="prize_pool_skins" min="0" max="100" step="5" value="20" placeholder="20">
+            </div>
+            
+            <div class="form-group">
+              <label for="prize_pool_ctp">CTP / Long Drive (%)</label>
+              <input type="number" id="prize_pool_ctp" min="0" max="100" step="5" value="10" placeholder="10">
+            </div>
+            
+            <div class="form-group">
+              <label for="prize_pool_charity">Charity / Host (%)</label>
+              <input type="number" id="prize_pool_charity" min="0" max="100" step="5" value="10" placeholder="10">
+            </div>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Prize Type & Payout Structure</h3>
+          
+          <div class="form-group">
+            <label for="prize_type">Prize Type</label>
+            <select id="prize_type">
+              <option value="cash" selected>Cash</option>
+              <option value="shop_credit">Pro Shop Credit</option>
+              <option value="gift_cards">Gift Cards</option>
+              <option value="merchandise">Merchandise/Trophies</option>
+              <option value="mixed">Mixed (Cash + Prizes)</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="payout_structure">Payout Structure</label>
+            <textarea id="payout_structure" placeholder="Describe how prizes will be distributed (e.g., 1st place: 40%, 2nd: 30%, 3rd: 20%, 4th: 10%)">1st place: 40%, 2nd: 30%, 3rd: 20%, 4th: 10%</textarea>
+            <small style="color: #666; display: block; margin-top: 5px;">This will be used to generate payout tables based on number of teams</small>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Prize Distribution Calculator</h3>
+          <p class="section-description">Calculate suggested prize amounts across all flights based on your total purse</p>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="calc_total_purse">Total Prize Purse ($)</label>
+              <input type="number" id="calc_total_purse" min="0" step="50" placeholder="e.g., 2000">
+            </div>
+            
+            <div class="form-group">
+              <label for="calc_places_to_pay">Places to Pay (per flight)</label>
+              <select id="calc_places_to_pay">
+                <option value="1">Top 1</option>
+                <option value="2">Top 2</option>
+                <option value="3" selected>Top 3</option>
+                <option value="4">Top 4</option>
+                <option value="5">Top 5</option>
+              </select>
+            </div>
+            
+            <div class="form-group" style="display: flex; align-items: flex-end;">
+              <button class="btn btn-primary" onclick="calculatePrizeDistribution()" style="width: 100%;">Calculate Distribution</button>
+            </div>
+          </div>
+          
+          <div id="prize-distribution-results" style="margin-top: 20px;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Registration -->
+    <div id="registration" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Registration Settings</h2>
+        </div>
+        
+        <div class="subsection">
+          <h3>Registration Limits</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="max_teams">Maximum Number of Teams</label>
+              <input type="number" id="max_teams" min="1" placeholder="e.g., 36">
+            </div>
+            
+            <div class="form-group">
+              <label for="max_players">Maximum Number of Players</label>
+              <input type="number" id="max_players" min="1" placeholder="e.g., 144">
+            </div>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Registration Deadlines</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="registration_cutoff">Registration Cutoff Date</label>
+              <input type="date" id="registration_cutoff">
+            </div>
+            
+            <div class="form-group">
+              <label for="payment_deadline">Payment Deadline</label>
+              <input type="date" id="payment_deadline">
+            </div>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Waitlist</h3>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="waitlist_enabled" checked>
+            <label for="waitlist_enabled">Enable waitlist when event is full</label>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Required Player Information</h3>
+          
+          <div class="info-box">
+            <p>The following information will be collected during registration:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+              <li>Name</li>
+              <li>Email</li>
+              <li>Phone</li>
+              <li>Handicap Index</li>
+              <li>Home Course</li>
+              <li>Tee Preference</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Logistics -->
+    <div id="logistics" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Event Logistics</h2>
+        </div>
+        
+        <div class="subsection">
+          <h3>Check-In</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="checkin_open_time">Check-In Opens</label>
+              <input type="time" id="checkin_open_time">
+            </div>
+            
+            <div class="form-group">
+              <label for="tee_gift">Tee Gift / Swag</label>
+              <input type="text" id="tee_gift" placeholder="e.g., Logo golf balls, divot tool">
+            </div>
+          </div>
+          
+          <div class="info-box">
+            <h3>Check-In Process</h3>
+            <p>Players will receive at check-in:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li>Scorecard</li>
+              <li>Rules sheet</li>
+              <li>Cart assignment</li>
+              <li>Hole assignment (for shotgun)</li>
+              <li>Tee gift (if applicable)</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Team & Cart Assignment</h3>
+          
+          <div class="form-group">
+            <label for="cart_assignment_method">Cart Assignment Method</label>
+            <select id="cart_assignment_method">
+              <option value="sequential" selected>Sequential (Cart 1, 2, 3...)</option>
+              <option value="by_hole">By Starting Hole</option>
+              <option value="manual">Manual Assignment</option>
+            </select>
+          </div>
+          
+          <div class="info-box">
+            <h3>Team Formation</h3>
+            <p>Teams can be created in three ways:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+              <li><strong>Self-selected:</strong> Players register as pre-formed teams</li>
+              <li><strong>Random:</strong> System randomly assigns players to teams</li>
+              <li><strong>Seeded:</strong> Teams balanced by handicap</li>
+            </ul>
+            <p style="margin-top: 10px;">Configure this in the Teams & Players tab after creating the event.</p>
+          </div>
+        </div>
+        
+        <div class="subsection">
+          <h3>Scoring Method</h3>
+          
+          <div class="form-group">
+            <label for="scoring_method">Primary Scoring Method</label>
+            <select id="scoring_method">
+              <option value="physical" selected>Physical Scorecards</option>
+              <option value="digital">Digital Scoring App</option>
+              <option value="both">Both Physical and Digital</option>
+            </select>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="live_scoring_enabled">
+            <label for="live_scoring_enabled">Enable live scoring/leaderboard</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Teams & Players -->
+    <div id="teams-players" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Teams & Players Management</h2>
+        </div>
+        
+        <div id="no-event-selected" class="info-box">
+          <h3>No Event Selected</h3>
+          <p>Please select or create an event in the Events tab to manage teams and players.</p>
+        </div>
+        
+        <div id="teams-players-content" class="hidden">
+          <div class="subsection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3>Flight Management</h3>
+              <button class="btn btn-primary" onclick="assignFlights()">Assign Teams to Flights</button>
+            </div>
+            <p class="section-description">Divide teams into flights based on scores. Best teams in Flight 1, distributed evenly across all flights.</p>
+            <div id="flight-info" style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 4px;"></div>
+          </div>
+          
+          <div class="subsection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3>Teams</h3>
+              <button class="btn btn-primary" onclick="addTeam()">+ Add Team</button>
+            </div>
+            <div id="teams-list"></div>
+          </div>
+          
+          <div class="subsection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3>All Players</h3>
+              <button class="btn btn-primary" onclick="addPlayer()">+ Add Player</button>
+            </div>
+            <div id="players-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Live Scoring -->
+    <div id="live-scoring" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Live Scoring & Leaderboard</h2>
+        </div>
+        
+        <div id="no-event-selected-scoring" class="info-box">
+          <h3>No Event Selected</h3>
+          <p>Please select or create an event in the Events tab.</p>
+        </div>
+        
+        <div id="scoring-content" class="hidden">
+          <div class="subsection">
+            <h3>Team Access Codes</h3>
+            <p class="section-description">Generate access codes for teams to enter scores on their mobile devices</p>
+            
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="generateAllAccessCodes()">Generate Codes for All Teams</button>
+              <button class="btn btn-secondary" onclick="viewAccessCodes()">View All Access Codes</button>
+            </div>
+            
+            <div id="access-codes-list" style="margin-top: 20px;"></div>
+          </div>
+          
+          <div class="subsection">
+            <h3>Quick Links</h3>
+            <div style="display: grid; gap: 15px;">
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">📱 Mobile Scoring Page</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  Teams use this page on their phones to enter scores during the round
+                </p>
+                <a href="mobile.html" target="_blank" class="btn btn-primary">Open Mobile Scoring</a>
+              </div>
+              
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">🏆 Live Leaderboard</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  View real-time leaderboard showing all teams' current scores
+                </p>
+                <a href="leaderboard.html" target="_blank" class="btn btn-primary">Open Leaderboard</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="subsection">
+            <h3>Score Audit Trail</h3>
+            <p class="section-description">View all score changes and modifications</p>
+            
+            <div class="button-group">
+              <button class="btn btn-secondary" onclick="loadAuditTrail()">Load Audit History</button>
+              <button class="btn btn-secondary" onclick="exportAuditTrail()">Export to CSV</button>
+            </div>
+            
+            <div id="audit-trail" style="margin-top: 20px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tab Content: Documents -->
+    <div id="documents" class="tab-content">
+      <div class="section">
+        <div class="section-header">
+          <h2>Event Documents</h2>
+        </div>
+        
+        <p class="section-description">Generate and download event documents based on your configuration</p>
+        
+        <div id="no-event-selected-docs" class="info-box">
+          <h3>No Event Selected</h3>
+          <p>Please select or create an event in the Events tab to generate documents.</p>
+        </div>
+        
+        <div id="documents-content" class="hidden">
+          <div class="subsection">
+            <h3>Available Documents</h3>
+            
+            <div style="display: grid; gap: 15px;">
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">📋 Event Summary</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  High-level overview with key details, timeline, and competition format
+                </p>
+                <button class="btn btn-primary" onclick="generateDocument('summary')">Generate Event Summary</button>
+              </div>
+              
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">📖 Rules & Format Document</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  Complete rules document with all playing conditions, handicaps, and scoring
+                </p>
+                <button class="btn btn-primary" onclick="generateDocument('rules')">Generate Rules Document</button>
+              </div>
+              
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">🎤 Starter Script</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  Pre-round announcement script for the host/starter (5 minutes)
+                </p>
+                <button class="btn btn-primary" onclick="generateDocument('starter-script')">Generate Starter Script</button>
+              </div>
+              
+              <div style="background: #f9f9f9; padding: 20px; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">🗒️ Scorecard Template</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                  Printable scorecard template for teams to use during the round
+                </p>
+                <button class="btn btn-primary" onclick="generateDocument('scorecard')">Generate Scorecard</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="document-output" class="subsection hidden">
+            <h3>Generated Document</h3>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 6px; border: 1px solid #ddd;">
+              <pre id="document-content" style="white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.6;"></pre>
+            </div>
+            <div class="button-group">
+              <button class="btn btn-secondary" onclick="copyDocument()">📋 Copy to Clipboard</button>
+              <button class="btn btn-secondary" onclick="downloadDocument()">⬇️ Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Save Button (appears on all tabs except Events and Documents) -->
+    <div id="save-button-container" class="button-group" style="position: sticky; bottom: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); margin-top: 30px;">
+      <button class="btn btn-success" onclick="saveEvent()">💾 Save Event Configuration</button>
+      <button class="btn btn-secondary" onclick="showTab('events')">Back to Events</button>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

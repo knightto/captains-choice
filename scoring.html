@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Team Scoring</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      touch-action: pan-y;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 100%);
+      color: white;
+      padding: 15px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .team-name {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    
+    .header .score-summary {
+      text-align: right;
+    }
+    
+    .total-score {
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    
+    .thru-holes {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    /* Login Screen */
+    .login-screen {
+      padding: 20px;
+      max-width: 400px;
+      margin: 40px auto;
+    }
+    
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .login-box h2 {
+      color: #2c5f2d;
+      margin-bottom: 10px;
+    }
+    
+    .login-box p {
+      color: #666;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 18px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-align: center;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: #2c5f2d;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #2c5f2d;
+      color: white;
+    }
+    
+    .btn-primary:active {
+      background: #1a3a1b;
+      transform: scale(0.98);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-top: 10px;
+    }
+    
+    /* Scoring Screen */
+    .scoring-screen {
+      display: none;
+    }
+    
+    .hole-navigator {
+      background: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .nav-btn {
+      background: #2c5f2d;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      min-width: 80px;
+    }
+    
+    .nav-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .hole-info {
+      text-align: center;
+    }
+    
+    .hole-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c5f2d;
+    }
+    
+    .hole-par {
+      font-size: 14px;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    .score-input-section {
+      padding: 25px 20px;
+      background: white;
+      margin: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    .score-label {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    .score-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .score-btn {
+      aspect-ratio: 1;
+      border: 3px solid #e0e0e0;
+      background: white;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .score-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .score-btn.selected {
+      background: #2c5f2d;
+      color: white;
+      border-color: #2c5f2d;
+    }
+    
+    .player-select {
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 2px solid #f0f0f0;
+    }
+    
+    .player-select label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #666;
+    }
+    
+    .player-select select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+    }
+    
+    .save-btn {
+      margin: 0 20px 20px;
+    }
+    
+    .scorecard-section {
+      margin: 15px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    .scorecard-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #2c5f2d;
+    }
+    
+    .scorecard-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    
+    .hole-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 5px;
+    }
+    
+    .hole-cell.completed {
+      background: #d4edda;
+      border-color: #28a745;
+    }
+    
+    .hole-cell.current {
+      background: #fff3cd;
+      border-color: #ffc107;
+    }
+    
+    .hole-num {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+    }
+    
+    .hole-score {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2c5f2d;
+    }
+    
+    .alert {
+      margin: 15px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .logout-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h2>🏌️ Team Scoring</h2>
+      <p>Enter your team's access code to begin scoring your round.</p>
+      
+      <div class="input-group">
+        <label>Access Code</label>
+        <input type="text" id="accessCodeInput" placeholder="ABC123" maxlength="6" autocomplete="off">
+      </div>
+      
+      <button class="btn btn-primary" onclick="login()">Access Scorecard</button>
+    </div>
+  </div>
+
+  <!-- Scoring Screen -->
+  <div class="scoring-screen" id="scoringScreen">
+    <div class="header">
+      <div class="header-content">
+        <div>
+          <h1 id="eventName">Golf Outing</h1>
+          <div class="team-name" id="teamName">Team Name</div>
+        </div>
+        <div class="score-summary">
+          <div class="total-score" id="totalScore">0</div>
+          <div class="thru-holes" id="thruHoles">Thru 0</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Change Team</button>
+    </div>
+
+    <!-- Hole Navigator -->
+    <div class="hole-navigator">
+      <button class="nav-btn" id="prevBtn" onclick="previousHole()">← Prev</button>
+      <div class="hole-info">
+        <div class="hole-number">Hole <span id="currentHole">1</span></div>
+        <div class="hole-par">Par <span id="holePar">4</span></div>
+      </div>
+      <button class="nav-btn" id="nextBtn" onclick="nextHole()">Next →</button>
+    </div>
+
+    <!-- Score Input -->
+    <div class="score-input-section">
+      <div class="score-label">Enter Team Score</div>
+      
+      <div class="score-buttons" id="scoreButtons">
+        <button class="score-btn" onclick="selectScore(2)">2</button>
+        <button class="score-btn" onclick="selectScore(3)">3</button>
+        <button class="score-btn" onclick="selectScore(4)">4</button>
+        <button class="score-btn" onclick="selectScore(5)">5</button>
+        <button class="score-btn" onclick="selectScore(6)">6</button>
+        <button class="score-btn" onclick="selectScore(7)">7</button>
+        <button class="score-btn" onclick="selectScore(8)">8</button>
+        <button class="score-btn" onclick="selectScore(9)">9</button>
+        <button class="score-btn" onclick="selectScore(10)">10</button>
+        <button class="score-btn" onclick="selectScore(11)">11</button>
+      </div>
+
+      <div class="player-select">
+        <label>Whose drive was used?</label>
+        <select id="playerSelect">
+          <option value="">Select player...</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary save-btn" id="saveBtn" onclick="saveScore()">Save & Continue</button>
+
+    <!-- Scorecard Overview -->
+    <div class="scorecard-section">
+      <div class="scorecard-title">Scorecard</div>
+      <div class="scorecard-grid" id="scorecardGrid"></div>
+    </div>
+
+    <div id="alertContainer"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000/api';
+    let teamData = null;
+    let players = [];
+    let scores = {};
+    let currentHole = 1;
+    let selectedScore = null;
+    let selectedPlayer = null;
+
+    async function login() {
+      const accessCode = document.getElementById('accessCodeInput').value.trim().toUpperCase();
+      
+      if (!accessCode) {
+        showAlert('Please enter an access code', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/mobile/access/${accessCode}`);
+        
+        if (!response.ok) {
+          throw new Error('Invalid access code');
+        }
+
+        const data = await response.json();
+        teamData = data.team;
+        players = data.players;
+
+        // Load existing scores
+        await loadScores();
+
+        // Switch to scoring screen
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('scoringScreen').style.display = 'block';
+
+        // Initialize UI
+        initializeScoringScreen();
+        
+      } catch (error) {
+        showAlert('Invalid access code. Please try again.', 'error');
+      }
+    }
+
+    function logout() {
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('scoringScreen').style.display = 'none';
+      document.getElementById('accessCodeInput').value = '';
+      teamData = null;
+      players = [];
+      scores = {};
+      currentHole = 1;
+    }
+
+    async function loadScores() {
+      try {
+        const response = await fetch(`${API_BASE}/teams/${teamData._id}/scores`);
+        const scoresData = await response.json();
+        
+        scoresData.forEach(score => {
+          scores[score.hole_number] = {
+            strokes: score.strokes,
+            playerId: score.drive_used_player_id
+          };
+        });
+      } catch (error) {
+        console.error('Error loading scores:', error);
+      }
+    }
+
+    function initializeScoringScreen() {
+      // Set team info
+      document.getElementById('teamName').textContent = teamData.team_name;
+      document.getElementById('eventName').textContent = 'Round in Progress';
+
+      // Populate player dropdown
+      const select = document.getElementById('playerSelect');
+      select.innerHTML = '<option value="">Select player...</option>';
+      players.forEach(player => {
+        const option = document.createElement('option');
+        option.value = player._id || player.id;
+        option.textContent = `${player.first_name} ${player.last_name}`;
+        select.appendChild(option);
+      });
+
+      // Find first unscored hole
+      for (let i = 1; i <= 18; i++) {
+        if (!scores[i]) {
+          currentHole = i;
+          break;
+        }
+      }
+
+      renderHole();
+      renderScorecard();
+      updateTotals();
+    }
+
+    function renderHole() {
+      document.getElementById('currentHole').textContent = currentHole;
+      document.getElementById('holePar').textContent = 4; // Default par
+
+      // Update navigation buttons
+      document.getElementById('prevBtn').disabled = currentHole === 1;
+      document.getElementById('nextBtn').disabled = currentHole === 18;
+
+      // Load existing score for this hole
+      const existingScore = scores[currentHole];
+      if (existingScore) {
+        selectedScore = existingScore.strokes;
+        selectedPlayer = existingScore.playerId;
+        
+        // Highlight selected score button
+        document.querySelectorAll('.score-btn').forEach(btn => {
+          btn.classList.remove('selected');
+          if (parseInt(btn.textContent) === selectedScore) {
+            btn.classList.add('selected');
+          }
+        });
+
+        // Select player
+        document.getElementById('playerSelect').value = selectedPlayer || '';
+      } else {
+        selectedScore = null;
+        selectedPlayer = null;
+        document.querySelectorAll('.score-btn').forEach(btn => btn.classList.remove('selected'));
+        document.getElementById('playerSelect').value = '';
+      }
+    }
+
+    function selectScore(score) {
+      selectedScore = score;
+      
+      document.querySelectorAll('.score-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        if (parseInt(btn.textContent) === score) {
+          btn.classList.add('selected');
+        }
+      });
+    }
+
+    function previousHole() {
+      if (currentHole > 1) {
+        currentHole--;
+        renderHole();
+        renderScorecard();
+      }
+    }
+
+    function nextHole() {
+      if (currentHole < 18) {
+        currentHole++;
+        renderHole();
+        renderScorecard();
+      }
+    }
+
+    async function saveScore() {
+      if (!selectedScore) {
+        showAlert('Please select a score', 'error');
+        return;
+      }
+
+      const playerSelect = document.getElementById('playerSelect');
+      selectedPlayer = playerSelect.value;
+
+      if (!selectedPlayer) {
+        showAlert('Please select whose drive was used', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/mobile/score`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            team_id: teamData._id,
+            hole_number: currentHole,
+            strokes: selectedScore,
+            drive_used_player_id: selectedPlayer,
+            recorded_by: 'mobile'
+          })
+        });
+
+        if (!response.ok) throw new Error('Failed to save score');
+
+        // Update local scores
+        scores[currentHole] = {
+          strokes: selectedScore,
+          playerId: selectedPlayer
+        };
+
+        showAlert('Score saved!', 'success');
+        
+        // Move to next hole if not on 18
+        if (currentHole < 18) {
+          setTimeout(() => {
+            currentHole++;
+            renderHole();
+            renderScorecard();
+            updateTotals();
+          }, 500);
+        } else {
+          updateTotals();
+          renderScorecard();
+          showAlert('Round complete! Great job! 🎉', 'success');
+        }
+
+      } catch (error) {
+        showAlert('Error saving score. Please try again.', 'error');
+      }
+    }
+
+    function renderScorecard() {
+      const grid = document.getElementById('scorecardGrid');
+      grid.innerHTML = '';
+
+      for (let hole = 1; hole <= 18; hole++) {
+        const cell = document.createElement('div');
+        cell.className = 'hole-cell';
+        
+        if (scores[hole]) {
+          cell.classList.add('completed');
+        }
+        if (hole === currentHole) {
+          cell.classList.add('current');
+        }
+
+        cell.innerHTML = `
+          <div class="hole-num">#${hole}</div>
+          <div class="hole-score">${scores[hole] ? scores[hole].strokes : '-'}</div>
+        `;
+
+        cell.onclick = () => {
+          currentHole = hole;
+          renderHole();
+          renderScorecard();
+        };
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function updateTotals() {
+      let total = 0;
+      let holesComplete = 0;
+
+      for (let hole = 1; hole <= 18; hole++) {
+        if (scores[hole]) {
+          total += scores[hole].strokes;
+          holesComplete++;
+        }
+      }
+
+      document.getElementById('totalScore').textContent = total;
+      document.getElementById('thruHoles').textContent = `Thru ${holesComplete}`;
+    }
+
+    function showAlert(message, type) {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      container.appendChild(alert);
+
+      setTimeout(() => alert.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
