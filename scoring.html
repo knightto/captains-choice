@@ -549,7 +549,7 @@
       }
 
       try {
-        const response = await fetch(`${API_BASE}/mobile/access/${accessCode}`);
+        const response = await fetch(`${API_BASE}/mobile/team/${accessCode}`);
         
         if (!response.ok) {
           throw new Error('Invalid access code');

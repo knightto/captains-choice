@@ -658,7 +658,8 @@ app.get('/api/mobile/team/:accessCode', async (req, res) => {
 });
 
 // Update score from mobile (with audit trail)
-app.put('/api/mobile/score', async (req, res) => {
+// Mobile score submission (POST and PUT both supported)
+const mobileScoreHandler = async (req, res) => {
   try {
     const { team_id, hole_number, strokes, drive_used_player_id, changed_by } = req.body;
     
@@ -699,7 +700,10 @@ app.put('/api/mobile/score', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
+};
+
+app.post('/api/mobile/score', mobileScoreHandler);
+app.put('/api/mobile/score', mobileScoreHandler);
 
 // Generate access code for team
 app.post('/api/teams/:id/generate-code', async (req, res) => {

@@ -61,12 +61,12 @@ A comprehensive full-stack application for managing golf outings with MongoDB cl
 - Cart assignment methods
 - Scoring methods (physical, digital, or both)
 
-## 🆕 What's New - MongoDB Edition
+## 🆕 What's New
 
-### Complete MongoDB Migration
-- **Cloud Database**: Migrated from SQLite to MongoDB Atlas
-- **Scalable**: Access your data from anywhere
-- **All API endpoints** converted to use Mongoose ODM
+### MongoDB Cloud Database
+- **Cloud Database**: MongoDB Atlas for scalable, cloud-based data storage
+- **Accessible Anywhere**: Access your tournament data from any location
+- **All API endpoints** use Mongoose ODM for robust data management
 
 ### New Interfaces
 
@@ -271,15 +271,14 @@ captains-choice-outing/
 ├── server/
 │   ├── index.js                    # Express API server (MongoDB)
 │   ├── mongodb.js                  # Mongoose schemas and connection
-│   ├── seed-sample-data.js         # Sample data generator (100 players, all options)
-│   ├── index.sqlite.js.backup      # Original SQLite version (backup)
-│   └── database.js                 # [Deprecated] SQLite version
+│   └── seed-sample-data.js         # Sample data generator (100 players, all options)
 ├── index.html                      # 👨‍💼 Admin UI (Full management)
 ├── app.js                          # Frontend JavaScript (Admin)
-├── display.html                    # 📺 Clubhouse big screen display (NEW!)
-├── scoring.html                    # 📱 Enhanced mobile scoring with hole navigation (NEW!)
+├── display.html                    # 📺 Clubhouse big screen display
+├── scoring.html                    # 📱 Enhanced mobile scoring with hole navigation
 ├── mobile.html                     # Mobile scoring (original version)
 ├── leaderboard.html                # Live leaderboard (original)
+├── theme.css                       # 🎨 Centralized golf theme with CSS variables
 ├── .env                            # MongoDB connection string (not in git)
 ├── vite.config.js                  # Vite configuration
 ├── package.json                    # Dependencies and scripts
@@ -288,13 +287,14 @@ captains-choice-outing/
 
 ## Recent Enhancements
 
-- ✅ **MongoDB Migration**: Migrated entire app to MongoDB Atlas cloud database
-- ✅ **Display Page**: Large screen clubhouse display with auto-refresh
-- ✅ **Enhanced Mobile Scoring**: Hole-by-hole navigation with touch-optimized UI
-- ✅ **Sample Data Generator**: 100 players with ALL options enabled
-- ✅ **Live scoring and leaderboard**: Real-time updates
-- ✅ **Mobile-responsive scoring app**: Works on all devices
-- ✅ **Flight Management**: Snake draft algorithm
+- ✅ **MongoDB Cloud Database**: Entire app runs on MongoDB Atlas
+- ✅ **Unified Golf Theme**: Centralized CSS with golf course colors and design
+- ✅ **Display Page**: Clubhouse big screen with auto-scroll and manual flight controls
+- ✅ **Enhanced Mobile Scoring**: Visual scorecard, hole-by-hole navigation, touch-optimized
+- ✅ **Sample Data Generator**: 100 players with ALL tournament options enabled
+- ✅ **Live Updates**: Real-time leaderboard with auto-refresh
+- ✅ **Mobile-Responsive**: Works perfectly on phones, tablets, and desktops
+- ✅ **Flight Management**: Snake draft algorithm for fair team distribution
 - ✅ **Prize Calculator**: Automatic payout distribution
 
 ## Future Enhancements
