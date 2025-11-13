@@ -13,6 +13,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
-  }
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        scoring: './scoring.html',
+        display: './display.html',
+        mobile: './mobile.html',
+        leaderboard: './leaderboard.html'
+      }
+    },
+    copyPublicDir: true
+  },
+  publicDir: 'public'
 });

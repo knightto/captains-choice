@@ -28,9 +28,14 @@ app.use(express.json());
 // Connect to MongoDB
 await connectDB();
 
-// Serve static files from dist folder in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
+// Serve static files from dist folder if it exists
+import fs from 'fs';
+const distPath = path.join(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  console.log('Serving static files from dist/');
+  app.use(express.static(distPath));
+} else {
+  console.log('No dist/ folder found. Run "npm run build" first or use "npm run dev" for development.');
 }
 
 // ==================== EVENT ENDPOINTS ====================
@@ -930,8 +935,8 @@ app.get('/api/events/:eventId/audit', async (req, res) => {
   }
 });
 
-// Serve frontend for all other routes in production
-if (process.env.NODE_ENV === 'production') {
+// Serve frontend for all other routes if dist exists
+if (fs.existsSync(distPath)) {
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
