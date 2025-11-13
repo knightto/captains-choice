@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   connectDB,
   Event,
@@ -14,6 +16,9 @@ import {
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -22,6 +27,11 @@ app.use(express.json());
 
 // Connect to MongoDB
 await connectDB();
+
+// Serve static files from dist folder in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')));
+}
 
 // ==================== EVENT ENDPOINTS ====================
 
@@ -919,6 +929,13 @@ app.get('/api/events/:eventId/audit', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Serve frontend for all other routes in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  });
+}
 
 // Start server
 app.listen(PORT, () => {

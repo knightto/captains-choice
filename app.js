@@ -1,5 +1,6 @@
 // Golf Outing Management System - Frontend JavaScript
-const API_BASE = 'http://localhost:3000/api';
+// Use relative API path - works in both dev (via proxy) and production
+const API_BASE = '/api';
 let currentEvent = null;
 let currentDocumentType = null;
 let currentDocumentContent = null;
