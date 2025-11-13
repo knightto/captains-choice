@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Leaderboard Display</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
     * {
       margin: 0;
@@ -186,6 +187,151 @@
       animation: pulse 2s infinite;
     }
 
+    .admin-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: all 0.2s;
+    }
+
+    .admin-link:hover {
+      background: rgba(0, 0, 0, 0.7);
+      transform: scale(1.05);
+    }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-radius: 15px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .controls.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .control-btn:active {
+      transform: scale(0.95);
+    }
+
+    .control-btn.active {
+      background: var(--green-primary);
+      border-color: var(--green-primary);
+      box-shadow: 0 0 20px rgba(44, 95, 45, 0.5);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .control-btn:disabled:hover {
+      transform: none;
+    }
+
+    .flight-nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 0 15px;
+      border-left: 2px solid rgba(255, 255, 255, 0.3);
+      border-right: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .flight-indicator {
+      font-size: 1.2rem;
+      font-weight: bold;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.1);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .control-label {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-right: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Single flight view */
+    .flights-container.single-view {
+      display: block;
+    }
+
+    .flights-container.single-view .flight-card {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .flights-container.single-view .flight-card.active {
+      display: block;
+    }
+
     /* Full screen mode optimizations */
     @media (min-width: 1920px) {
       .header h1 { font-size: 5rem; }
@@ -197,6 +343,8 @@
   </style>
 </head>
 <body>
+  <a href="/" class="admin-link">⚙️ Admin</a>
+  
   <div class="container">
     <div class="header">
       <h1><span class="live-indicator"></span>LIVE LEADERBOARD</h1>
@@ -210,10 +358,36 @@
     </div>
   </div>
 
+  <!-- Controls -->
+  <div class="controls" id="controls">
+    <div>
+      <button class="control-btn active" id="autoScrollBtn" onclick="toggleAutoScroll()">
+        🔄 Auto Scroll
+      </button>
+    </div>
+    
+    <div class="flight-nav" id="flightNav">
+      <button class="nav-btn" id="prevFlightBtn" onclick="previousFlight()">◀</button>
+      <div class="flight-indicator" id="flightIndicator">All Flights</div>
+      <button class="nav-btn" id="nextFlightBtn" onclick="nextFlight()">▶</button>
+    </div>
+
+    <div>
+      <button class="control-btn" id="viewAllBtn" onclick="viewAllFlights()">
+        📊 View All
+      </button>
+    </div>
+  </div>
+
   <script>
     const API_BASE = 'http://localhost:3000/api';
     let currentEventId = null;
     let refreshInterval = null;
+    let autoScrollInterval = null;
+    let isAutoScrolling = true;
+    let currentFlightIndex = -1; // -1 means showing all
+    let flights = [];
+    let leaderboardData = [];
 
     // Get event ID from URL parameter or use first event
     async function initialize() {
@@ -235,6 +409,9 @@
         
         // Auto-refresh every 30 seconds
         refreshInterval = setInterval(loadLeaderboard, 30000);
+        
+        // Start auto-scroll (cycle through flights every 10 seconds)
+        startAutoScroll();
       }
     }
 
@@ -256,6 +433,7 @@
         const response = await fetch(`${API_BASE}/events/${currentEventId}/leaderboard`);
         const data = await response.json();
         
+        leaderboardData = data;
         displayLeaderboard(data);
         updateTimestamp();
       } catch (error) {
@@ -270,6 +448,8 @@
       
       if (!data || data.length === 0) {
         container.innerHTML = '<div class="no-data">No teams have started yet</div>';
+        flights = [];
+        updateFlightNavigation();
         return;
       }
 
@@ -283,13 +463,19 @@
         flightGroups[flight].push(team);
       });
 
+      // Store flight names
+      flights = Object.keys(flightGroups).sort();
+      updateFlightNavigation();
+
       // Generate HTML for each flight
       let html = '';
-      Object.keys(flightGroups).sort().forEach(flightName => {
+      let flightIndex = 0;
+      flights.forEach(flightName => {
         const teams = flightGroups[flightName];
+        const isActive = currentFlightIndex === -1 || currentFlightIndex === flightIndex;
         
         html += `
-          <div class="flight-card">
+          <div class="flight-card ${isActive ? 'active' : ''}" data-flight-index="${flightIndex}">
             <div class="flight-header">${flightName}</div>
             <table class="leaderboard-table">
               <thead>
@@ -333,9 +519,17 @@
             </table>
           </div>
         `;
+        flightIndex++;
       });
 
       container.innerHTML = html;
+      
+      // Update container class for single/all view
+      if (currentFlightIndex === -1) {
+        container.classList.remove('single-view');
+      } else {
+        container.classList.add('single-view');
+      }
     }
 
     function updateTimestamp() {
@@ -348,6 +542,114 @@
       document.getElementById('lastUpdate').textContent = `Last updated: ${timeString}`;
     }
 
+    // Auto-scroll functions
+    function startAutoScroll() {
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+      }
+      isAutoScrolling = true;
+      document.getElementById('autoScrollBtn').classList.add('active');
+      
+      // Cycle through flights every 10 seconds
+      autoScrollInterval = setInterval(() => {
+        if (flights.length > 0) {
+          currentFlightIndex++;
+          if (currentFlightIndex >= flights.length) {
+            currentFlightIndex = -1; // Back to showing all
+          }
+          displayLeaderboard(leaderboardData);
+        }
+      }, 10000);
+    }
+
+    function stopAutoScroll() {
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+      isAutoScrolling = false;
+      document.getElementById('autoScrollBtn').classList.remove('active');
+    }
+
+    function toggleAutoScroll() {
+      if (isAutoScrolling) {
+        stopAutoScroll();
+      } else {
+        startAutoScroll();
+      }
+    }
+
+    // Flight navigation
+    function previousFlight() {
+      stopAutoScroll();
+      currentFlightIndex--;
+      if (currentFlightIndex < -1) {
+        currentFlightIndex = flights.length - 1;
+      }
+      displayLeaderboard(leaderboardData);
+    }
+
+    function nextFlight() {
+      stopAutoScroll();
+      currentFlightIndex++;
+      if (currentFlightIndex >= flights.length) {
+        currentFlightIndex = -1;
+      }
+      displayLeaderboard(leaderboardData);
+    }
+
+    function viewAllFlights() {
+      stopAutoScroll();
+      currentFlightIndex = -1;
+      displayLeaderboard(leaderboardData);
+    }
+
+    function updateFlightNavigation() {
+      const indicator = document.getElementById('flightIndicator');
+      const prevBtn = document.getElementById('prevFlightBtn');
+      const nextBtn = document.getElementById('nextFlightBtn');
+      const viewAllBtn = document.getElementById('viewAllBtn');
+
+      if (flights.length === 0) {
+        indicator.textContent = 'No Flights';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        viewAllBtn.disabled = true;
+        return;
+      }
+
+      if (currentFlightIndex === -1) {
+        indicator.textContent = 'All Flights';
+        viewAllBtn.classList.add('active');
+      } else {
+        indicator.textContent = flights[currentFlightIndex] || 'Unknown';
+        viewAllBtn.classList.remove('active');
+      }
+
+      prevBtn.disabled = false;
+      nextBtn.disabled = false;
+      viewAllBtn.disabled = false;
+    }
+
+    // Hide controls after 5 seconds of inactivity
+    let controlsTimeout;
+    function showControls() {
+      const controls = document.getElementById('controls');
+      controls.classList.remove('hidden');
+      
+      clearTimeout(controlsTimeout);
+      controlsTimeout = setTimeout(() => {
+        controls.classList.add('hidden');
+      }, 5000);
+    }
+
+    // Show controls on mouse move
+    document.addEventListener('mousemove', showControls);
+    document.addEventListener('click', showControls);
+    
+    // Show controls initially
+    showControls();
+
     // Initialize on load
     initialize();
 
@@ -355,6 +657,9 @@
     window.addEventListener('beforeunload', () => {
       if (refreshInterval) {
         clearInterval(refreshInterval);
+      }
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
       }
     });
   </script>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Golf Outing Admin</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
     * {
       margin: 0;
@@ -39,6 +40,43 @@
     .subtitle {
       opacity: 0.9;
       font-size: 14px;
+    }
+
+    .quick-links {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .quick-links-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+
+    .quick-links a {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      margin-right: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .quick-links a:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .quick-links a::before {
+      content: '🔗 ';
+      margin-right: 5px;
     }
     
     .format-dependent {
@@ -346,6 +384,15 @@
     <header>
       <h1>🏌️ Golf Outing Management System</h1>
       <p class="subtitle">Comprehensive admin panel for all tournament formats</p>
+      
+      <div class="quick-links">
+        <div class="quick-links-title">Quick Access</div>
+        <a href="/" target="_self">Admin Home</a>
+        <a href="/display.html" target="_blank">📺 Clubhouse Display</a>
+        <a href="/scoring.html" target="_blank">📱 Mobile Scoring</a>
+        <a href="/mobile.html" target="_blank">📋 Mobile (Alt)</a>
+        <a href="/leaderboard.html" target="_blank">🏆 Leaderboard</a>
+      </div>
     </header>
     
     <div id="alert-container"></div>
